@@ -456,10 +456,18 @@ class Main(QWidget, GUI):
         self.widget_10.hide()
         self.widget.show()
         # занесение статистики в БД
-        self.cur.execute("""INSERT INTO players(player_1,player_2) VALUES(?,?)""", (self.player_1, self.player_2))
-        self.cur.execute("""INSERT INTO statistic(winner) VALUES(?)""", (self.pobeda, ))
+        res = self.cur.execute("""SELECT * FROM statistic""").fetchall()
+        self.cur.execute("""INSERT INTO players(ID,player_1,player_2) VALUES(?,?,?)""",
+                         (len(res), self.player_1, self.player_2))
+        self.cur.execute("""INSERT INTO statistic(ID,winner) VALUES(?,?)""", (len(res), self.pobeda))
         self.con.commit()
         self.resize(386, 548)
+        files = ['chast1.wav', 'chast2.wav', 'chast3.wav', 'chast4.wav', 'output.wav',
+                 'output1.wav', 'output2.wav', 'output3.wav', 'output4.wav', 'resultat.wav',
+                 'reversed1.wav', 'reversed2.wav', 'reversed3.wav', 'reversed4.wav', 'reversed.wav']
+        for el in files:
+            path = os.path.join(os.path.abspath(os.path.dirname(__file__)), el)
+            os.remove(path)
 
     def end(self):
         # проверка правильности ответа и вывод победителя
